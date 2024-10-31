@@ -6,16 +6,17 @@ import com.formdev.flatlaf.icons.FlatFileChooserNewFolderIcon;
 import com.formdev.flatlaf.icons.FlatTreeLeafIcon;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class FileContextMenu extends JPopupMenu {
+    String path;
 
     public FileContextMenu(FileManager fileManager, String projectDir, Runnable runnable) {
-
         JMenuItem newCFile = new JMenuItem("New C File");
         newCFile.setIcon(new FlatTreeLeafIcon());
         newCFile.addActionListener(e -> {
             new CreateDialog("Enter file name...", (value) -> {
-                fileManager.createNewFile(value + ".c", projectDir);
+                fileManager.createNewFile(value + ".c", path);
                 runnable.run();
             });
         });
@@ -26,7 +27,7 @@ public class FileContextMenu extends JPopupMenu {
         newFolder.setIcon(new FlatFileChooserNewFolderIcon());
         newFolder.addActionListener(e -> {
             new CreateDialog("Enter file name...", (value) -> {
-                fileManager.createNewFile(value + ".c", projectDir);
+                fileManager.createNewFile(value + ".c", path);
                 runnable.run();
             });
         });
@@ -37,7 +38,7 @@ public class FileContextMenu extends JPopupMenu {
         delete.setIcon(new FlatClearIcon());
         delete.addActionListener(e -> {
             new CreateDialog("Enter file name...", (value) -> {
-                fileManager.createNewFile(value + ".c", projectDir);
+                fileManager.createNewFile(value + ".c", path);
                 runnable.run();
             });
         });
@@ -45,4 +46,8 @@ public class FileContextMenu extends JPopupMenu {
         add(delete);
     }
 
+    public void showWithPath(Component invoker, int x, int y, String path) {
+        this.path = path;
+        show(invoker, x, y);
+    }
 }

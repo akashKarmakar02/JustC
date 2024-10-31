@@ -3,7 +3,6 @@ package com.amberj.component;
 import com.amberj.common.FileData;
 import com.amberj.common.FileType;
 import com.amberj.feature.FileManager;
-import com.formdev.flatlaf.icons.FlatTreeLeafIcon;
 import org.fife.rsta.ac.LanguageSupportFactory;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -65,13 +64,12 @@ public class FileTree extends JTree {
         addTreeSelectionListener(e -> openSelectedFile(tabbedPane));
         addMouseListener(new MouseAdapter() {
             public void mouseReleased(MouseEvent e) {
-                System.out.println(e.getButton());
                 if (e.getButton() == MouseEvent.BUTTON3) {
                     int row = getClosestRowForLocation(e.getX(), e.getY());
                     setSelectionRow(row);
                     TreePath path = getPathForRow(row);
                     if (path != null) {
-                        popupMenu.show(e.getComponent(), e.getX(), e.getY());
+                        popupMenu.showWithPath(e.getComponent(), e.getX(), e.getY(), getSelectedNodePath());
                     }
                 }
             }
@@ -90,6 +88,18 @@ public class FileTree extends JTree {
         ExecutorService watcherService = Executors.newVirtualThreadPerTaskExecutor();
         watcherService.submit(this::watchDirectoryChanges);
         reloadTree();
+    }
+
+    private String getSelectedNodePath() {
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
+        if (selectedNode == null || selectedNode == root) return null;
+
+        StringBuilder filePath = new StringBuilder(projectDir);
+        for (int i = 1; i < selectedNode.getPath().length; i++) {
+            filePath.append("/").append(selectedNode.getPath()[i]);
+        }
+
+        return filePath.toString();
     }
 
     private void deleteSelectedNode() {
