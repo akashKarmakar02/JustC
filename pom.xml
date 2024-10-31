@@ -31,7 +31,6 @@
         </dependency>
     </dependencies>
 
-
     <build>
         <plugins>
             <plugin>
@@ -52,7 +51,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.amberj.ui.App</mainClass>
+                            <mainClass>com.amberj.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -65,6 +64,21 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.graalvm.nativeimage</groupId>
+                <artifactId>native-image-maven-plugin</artifactId>
+                <version>21.2.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>native-image</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>com.amberj.Main</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>

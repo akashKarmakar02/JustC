@@ -3,6 +3,7 @@ package com.amberj.component;
 import com.amberj.common.FileData;
 import com.amberj.common.FileType;
 import com.amberj.feature.FileManager;
+import com.amberj.lib.WindowProvider;
 import org.fife.rsta.ac.LanguageSupportFactory;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -27,6 +28,7 @@ public class FileTree extends JTree {
 
     private final String projectDir;
     private final DefaultMutableTreeNode root;
+    private final JFrame frame = WindowProvider.getFrame();
 
     public FileTree(JTabbedPane tabbedPane, String projectDir, FileManager fileManager) {
         super(new DefaultMutableTreeNode(Arrays.stream(projectDir.split("/")).toList().getLast()));
@@ -175,7 +177,7 @@ public class FileTree extends JTree {
 
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Could not open file: " + file.getName(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, "Could not open file: " + file.getName(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -221,7 +223,7 @@ public class FileTree extends JTree {
                     key.reset();
 
                     if (updated) {
-                        reloadTree(); // Update the tree only if there's a relevant change
+                        reloadTree();
                     }
                 }
             }

@@ -12,11 +12,18 @@ public class FileContextMenu extends JPopupMenu {
     String path;
 
     public FileContextMenu(FileManager fileManager, String projectDir, Runnable runnable) {
+        String fileCreationPath;
+        if (path == null) {
+            fileCreationPath = projectDir;
+        } else {
+            fileCreationPath = path;
+        }
+
         JMenuItem newCFile = new JMenuItem("New C File");
         newCFile.setIcon(new FlatTreeLeafIcon());
         newCFile.addActionListener(e -> {
             new CreateDialog("Enter file name...", (value) -> {
-                fileManager.createNewFile(value + ".c", path);
+                fileManager.createNewFile(value + ".c", fileCreationPath);
                 runnable.run();
             });
         });
@@ -27,7 +34,7 @@ public class FileContextMenu extends JPopupMenu {
         newFolder.setIcon(new FlatFileChooserNewFolderIcon());
         newFolder.addActionListener(e -> {
             new CreateDialog("Enter file name...", (value) -> {
-                fileManager.createNewFile(value + ".c", path);
+                fileManager.createNewFile(value + ".c", fileCreationPath);
                 runnable.run();
             });
         });
@@ -38,7 +45,7 @@ public class FileContextMenu extends JPopupMenu {
         delete.setIcon(new FlatClearIcon());
         delete.addActionListener(e -> {
             new CreateDialog("Enter file name...", (value) -> {
-                fileManager.createNewFile(value + ".c", path);
+                fileManager.createNewFile(value + ".c", fileCreationPath);
                 runnable.run();
             });
         });
