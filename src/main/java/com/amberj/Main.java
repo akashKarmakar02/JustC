@@ -8,24 +8,26 @@ import com.amberj.feature.Compiler;
 import com.amberj.feature.FileManager;
 import com.amberj.lib.ProjectDataLib;
 import com.amberj.lib.WindowProvider;
-import com.amberj.terminal.TerminalEmulator;
+import com.amberj.util.EventEmitter;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Main {
     static FileManager fileManager;
     static FilesRepository filesRepository;
     static Compiler compiler;
-    static TerminalEmulator terminalEmulator;
+    static EventEmitter emitter;
 
     static {
         fileManager = new FileManager();
         compiler = new Compiler();
-        terminalEmulator = new TerminalEmulator();
+        emitter = new EventEmitter();
     }
 
     public static void createAndShowEditor() {
@@ -34,7 +36,6 @@ public class Main {
 
             UIManager.put("Component.focusWidth", 0);
             UIManager.put("TabbedPane.focusColor", Color.DARK_GRAY);
-
         } catch (UnsupportedLookAndFeelException e) {
             throw new RuntimeException(e);
         }
@@ -68,17 +69,37 @@ public class Main {
         }
 
 
+
         filesRepository = new FilesRepository(dataLib);
 
         FileTab tabbedPane = new FileTab(filesRepository, fileManager);
-        JMenuBar menuBar = new MenuBar(fileManager, tabbedPane, compiler);
-        JTree fileTree = new FileTree(tabbedPane, projectDir, fileManager, filesRepository);
+        JMenuBar menuBar = new MenuBar(fileManager, tabbedPane, compiler, emitter);
+        AtomicReference<JTree> fileTree = new AtomicReference<>(new FileTree(tabbedPane, projectDir, fileManager, filesRepository));
 
-
-
-        JScrollPane treeScrollPane = new JScrollPane(fileTree);
+        JScrollPane treeScrollPane = new JScrollPane(fileTree.get());
         treeScrollPane.setPreferredSize(new Dimension(200, 0));
         treeScrollPane.setBorder(BorderFactory.createEmptyBorder());
+
+        emitter.on(EventEmitter.EventType.PROJECT_CHANGED.value, (path) -> {
+            Thread.ofVirtual().start(() -> {
+                dataLib.setProperty(ProjectDataLib.ProjectDataKey.PROJECT_DIRECTORY, (String) path);
+                dataLib.setProperty(ProjectDataLib.ProjectDataKey.VIEW_TAB_FILES, "");
+                dataLib.setPropertyList(ProjectDataLib.ProjectDataKey.OPENED_FILES, new ArrayList<>());
+
+                SwingUtilities.invokeLater(() -> {
+                    tabbedPane.removeAll();
+
+                    frame.remove(treeScrollPane);
+                    fileTree.set(new FileTree(tabbedPane, (String) path, fileManager, filesRepository));
+                    JScrollPane newTreeScrollPane = new JScrollPane(fileTree.get());
+                    newTreeScrollPane.setPreferredSize(new Dimension(200, 0));
+                    frame.add(newTreeScrollPane, BorderLayout.WEST);
+
+                    frame.revalidate();
+                    frame.repaint();
+                });
+            });
+        });
 
         frame.setJMenuBar(menuBar);
         frame.add(treeScrollPane, BorderLayout.WEST);

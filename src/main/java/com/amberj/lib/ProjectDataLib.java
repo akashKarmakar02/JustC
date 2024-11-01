@@ -62,7 +62,11 @@ public class ProjectDataLib {
         try (InputStream input = new FileInputStream(dataFilePath.toFile())) {
             Properties properties = new Properties();
             properties.load(input);
-            properties.setProperty(key, value);
+            if (value != null) {
+                properties.setProperty(key, value);
+            } else {
+                properties.remove(key);
+            }
 
             try (OutputStream output = new FileOutputStream(dataFilePath.toFile())) {
                 properties.store(output, null);

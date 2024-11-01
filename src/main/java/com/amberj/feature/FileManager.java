@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Objects;
 
 public class FileManager {
@@ -62,13 +61,13 @@ public class FileManager {
     }
 
     // Open a folder and return its Path
-    public Path openFolder() {
+    public String openFolder() {
         JFileChooser folderChooser = new JFileChooser();
         FlatFileChooserUI.createUI(folderChooser);
         folderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         int result = folderChooser.showOpenDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
-            return folderChooser.getSelectedFile().toPath();
+            return folderChooser.getSelectedFile().getAbsolutePath();
         }
         return null;
     }

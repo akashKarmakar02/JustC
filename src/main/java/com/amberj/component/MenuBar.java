@@ -3,6 +3,7 @@ package com.amberj.component;
 import com.amberj.feature.Compiler;
 import com.amberj.feature.FileManager;
 import com.amberj.lib.WindowProvider;
+import com.amberj.util.EventEmitter;
 import com.formdev.flatlaf.extras.components.FlatButton;
 import com.formdev.flatlaf.icons.*;
 
@@ -16,14 +17,18 @@ public class MenuBar extends JMenuBar {
 
     private final JFrame frame = WindowProvider.getFrame();
 
-    public MenuBar(FileManager fileManager, FileTab fileTab, Compiler compiler) {
+    public MenuBar(FileManager fileManager, FileTab fileTab, Compiler compiler, EventEmitter emitter) {
         super();
 
         // Create File Menu
         JMenu fileMenu = new JMenu("File");
         fileMenu.add(new JMenuItem("New"));
         fileMenu.add(new JMenuItem("Open") {{
-            addActionListener(e -> fileManager.openFolder());
+            addActionListener(e -> {
+                var path = fileManager.openFolder();
+                System.out.println("Here");
+                emitter.emit(EventEmitter.EventType.PROJECT_CHANGED, path);
+            });
         }});
         fileMenu.add(new JMenuItem("Save"));
         fileMenu.add(new JMenuItem("Save As"));
