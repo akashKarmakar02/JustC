@@ -25,8 +25,6 @@ public class TerminalEmulator {
 
             frame.add(terminal.getTerminal());
 
-            terminal.runCommand("gcc /home/akash/Desktop/c/src/demo.c -o /home/akash/Desktop/c/src/demo && /home/akash/Desktop/c/src/demo");
-
             frame.setVisible(true);
 
         });

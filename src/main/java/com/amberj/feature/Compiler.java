@@ -2,11 +2,7 @@ package com.amberj.feature;
 
 import com.amberj.lib.WindowProvider;
 import com.amberj.terminal.JustTerminal;
-import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
-import org.jline.utils.NonBlockingReader;
 
-import javax.swing.*;
 import java.io.*;
 
 public class Compiler {

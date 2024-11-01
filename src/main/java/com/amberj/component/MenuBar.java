@@ -4,31 +4,26 @@ import com.amberj.feature.Compiler;
 import com.amberj.feature.FileManager;
 import com.amberj.lib.WindowProvider;
 import com.formdev.flatlaf.extras.components.FlatButton;
+import com.formdev.flatlaf.icons.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Objects;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MenuBar extends JMenuBar {
 
     private final JFrame frame = WindowProvider.getFrame();
-    private final FileTab fileTab;
-    private final Compiler compiler;
 
     public MenuBar(FileManager fileManager, FileTab fileTab, Compiler compiler) {
         super();
-        this.fileTab = fileTab;
-        this.compiler = compiler;
 
         // Create File Menu
         JMenu fileMenu = new JMenu("File");
         fileMenu.add(new JMenuItem("New"));
         fileMenu.add(new JMenuItem("Open") {{
-            addActionListener(e -> {
-                fileManager.openFolder();
-            });
+            addActionListener(e -> fileManager.openFolder());
         }});
         fileMenu.add(new JMenuItem("Save"));
         fileMenu.add(new JMenuItem("Save As"));
@@ -58,28 +53,66 @@ public class MenuBar extends JMenuBar {
         UIManager.put("Panel.foreground", UIManager.getColor("MenuItem.foreground"));
 
 
-        // Create a panel for the button
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
-
-
-        FlatButton runButton = new FlatButton();
-        runButton.setButtonType(FlatButton.ButtonType.roundRect);
-        runButton.setText("Run");
-        runButton.addActionListener(e -> {
+        FlatButton runButton = createWindowControlButton(new FlatRunIcon(), e -> {
             var path = fileTab.getSelectedTabNodePath();
             if (path != null) {
                 compiler.compileAndRunCCode(path);
                 System.out.println(path);
             }
         });
+        FlatButton minimizeButton = createWindowControlButton(new FlatWindowIconifyIcon(), e -> frame.setState(Frame.ICONIFIED));
+        FlatButton maximizeButton = createWindowControlButton(new FlatWindowMaximizeIcon(), e -> frame.setExtendedState(frame.getExtendedState() ^ Frame.MAXIMIZED_BOTH));
+        FlatButton closeButton = createWindowControlButton(new FlatWindowCloseIcon(), e -> System.exit(0));
 
-        runButton.setPreferredSize(new Dimension(90, 30));
+
+        setTitleBarButtonDimension(runButton);
 
         add(Box.createHorizontalGlue());
         rightPanel.add(runButton);
+        rightPanel.add(minimizeButton);
+        rightPanel.add(maximizeButton);
+        rightPanel.add(closeButton);
 
-        // Add the panel to the menu bar
         add(rightPanel);
+
+        addDragFunctionality();
+    }
+
+
+    private void setTitleBarButtonDimension(FlatButton button) {
+        button.setPreferredSize(new Dimension(45, 37));
+    }
+
+    private FlatButton createWindowControlButton(Icon icon, ActionListener action) {
+        FlatButton button = new FlatButton();
+        button.setButtonType(FlatButton.ButtonType.toolBarButton);
+        button.setIcon(icon);
+        button.setPreferredSize(new Dimension(45, 37));
+        button.addActionListener(action);
+        return button;
+    }
+
+    private void addDragFunctionality() {
+        final Point[] startPoint = {null};
+
+        this.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                startPoint[0] = e.getPoint();
+            }
+        });
+
+        this.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                Point windowPoint = frame.getLocation();
+                frame.setLocation(
+                    windowPoint.x + e.getX() - startPoint[0].x,
+                    windowPoint.y + e.getY() - startPoint[0].y
+                );
+            }
+        });
     }
 }
