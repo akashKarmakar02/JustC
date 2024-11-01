@@ -133,4 +133,14 @@ public class FileManager {
         }
     }
 
+    public void saveFile(File file, String content) {
+        try {
+            Files.write(file.toPath(), content.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(frame, "Could not save file: " + file.getName(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
 }

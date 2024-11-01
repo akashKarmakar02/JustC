@@ -12,24 +12,27 @@ import java.util.function.Consumer;
 
 public class CreateDialog {
 
-    public CreateDialog(String hint, Consumer<String> onEnter) {
+    public CreateDialog(String title, String hint, Consumer<String> onEnter) {
         JFrame frame = WindowProvider.getFrame();
 
         JDialog dialog = new JDialog((Frame) null, true);
         dialog.setUndecorated(true);
-        dialog.setLayout(new FlowLayout());
+        dialog.setLayout(new BorderLayout());
+
+        JLabel headingLabel = new JLabel(title);
+        headingLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        headingLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        headingLabel.setBorder(new EmptyBorder(10, 0, 0, 0));
 
         FlatTextField textField = new FlatTextField();
         textField.setColumns(20);
         textField.setPlaceholderText(hint);
 
-        // Wrap the FlatTextField in a JPanel with padding
         JPanel textFieldPanel = new JPanel();
         textFieldPanel.setLayout(new BorderLayout());
-        textFieldPanel.setBorder(new EmptyBorder(10, 3, 3, 4)); // Add padding here
+        textFieldPanel.setBorder(new EmptyBorder(20, 15, 15, 10));
         textFieldPanel.add(textField, BorderLayout.CENTER);
 
-        // Add ActionListener to handle Enter key in the text field
         textField.addActionListener(e -> {
             String inputText = textField.getText();
             if (!inputText.equals(hint) && !inputText.isEmpty()) {
@@ -38,7 +41,6 @@ public class CreateDialog {
             }
         });
 
-        // Add KeyListener to handle Enter and Escape keys
         textField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent keyEvent) {
@@ -51,10 +53,10 @@ public class CreateDialog {
             }
         });
 
-        // Add the panel with padding to the dialog
-        dialog.add(textFieldPanel);
+        dialog.add(headingLabel, BorderLayout.NORTH);
+        dialog.add(textFieldPanel, BorderLayout.CENTER);
         dialog.pack();
         dialog.setLocationRelativeTo(frame);
-        dialog.setVisible(true); // Show the dialog
+        dialog.setVisible(true);
     }
 }

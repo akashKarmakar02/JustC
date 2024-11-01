@@ -9,21 +9,16 @@ import javax.swing.*;
 import java.awt.*;
 
 public class FileContextMenu extends JPopupMenu {
-    String path;
+    private String path;
+    private final String projectDir;
 
     public FileContextMenu(FileManager fileManager, String projectDir, Runnable runnable) {
-        String fileCreationPath;
-        if (path == null) {
-            fileCreationPath = projectDir;
-        } else {
-            fileCreationPath = path;
-        }
-
+        this.projectDir = projectDir;
         JMenuItem newCFile = new JMenuItem("New C File");
         newCFile.setIcon(new FlatTreeLeafIcon());
         newCFile.addActionListener(e -> {
-            new CreateDialog("Enter file name...", (value) -> {
-                fileManager.createNewFile(value + ".c", fileCreationPath);
+            new CreateDialog("Enter C File", "Name", (value) -> {
+                fileManager.createNewFile(value + ".c", getFileCreationPath());
                 runnable.run();
             });
         });
@@ -33,24 +28,27 @@ public class FileContextMenu extends JPopupMenu {
         JMenuItem newFolder = new JMenuItem("New Folder");
         newFolder.setIcon(new FlatFileChooserNewFolderIcon());
         newFolder.addActionListener(e -> {
-            new CreateDialog("Enter file name...", (value) -> {
-                fileManager.createNewFile(value + ".c", fileCreationPath);
+            new CreateDialog("Enter Folder Name", "Enter file name...", (value) -> {
+                System.out.println(getFileCreationPath());
+                fileManager.createFolder(value, getFileCreationPath());
                 runnable.run();
             });
         });
 
         add(newFolder);
 
-        JMenuItem delete = new JMenuItem("New C File");
+        JMenuItem delete = new JMenuItem("Delete");
         delete.setIcon(new FlatClearIcon());
-        delete.addActionListener(e -> {
-            new CreateDialog("Enter file name...", (value) -> {
-                fileManager.createNewFile(value + ".c", fileCreationPath);
-                runnable.run();
-            });
-        });
+        delete.addActionListener(e -> {});
 
         add(delete);
+    }
+
+    private String getFileCreationPath() {
+        System.out.println();
+        if (path == null)
+            return projectDir;
+        return path;
     }
 
     public void showWithPath(Component invoker, int x, int y, String path) {

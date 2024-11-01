@@ -20,6 +20,11 @@
             <version>3.5.1</version>
         </dependency>
         <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-intellij-themes</artifactId>
+            <version>3.5.1</version>
+        </dependency>
+        <dependency>
             <groupId>com.fifesoft</groupId>
             <artifactId>languagesupport</artifactId>
             <version>3.3.0</version>
@@ -28,6 +33,42 @@
             <groupId>com.fifesoft</groupId>
             <artifactId>rsyntaxtextarea</artifactId>
             <version>3.5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jline</groupId>
+            <artifactId>jline</artifactId>
+            <version>3.26.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.pty4j</groupId>
+            <artifactId>pty4j</artifactId>
+            <version>0.13.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jediterm</groupId>
+            <artifactId>core</artifactId>
+            <version>3.47</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/jediterm-core-3.47-SNAPSHOT.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.jediterm</groupId>
+            <artifactId>ui</artifactId>
+            <version>3.47</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/jediterm-ui-3.47-SNAPSHOT.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.jediterm</groupId>
+            <artifactId>app</artifactId>
+            <version>3.47</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/JediTerm-3.47-SNAPSHOT.jar</systemPath>
         </dependency>
     </dependencies>
 

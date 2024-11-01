@@ -2,13 +2,9 @@ package com.amberj.component;
 
 import com.amberj.common.FileData;
 import com.amberj.common.FileType;
+import com.amberj.data.FilesRepository;
 import com.amberj.feature.FileManager;
 import com.amberj.lib.WindowProvider;
-import org.fife.rsta.ac.LanguageSupportFactory;
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
-import org.fife.ui.rsyntaxtextarea.Theme;
-import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
 import javax.swing.tree.*;
@@ -16,10 +12,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.*;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -29,13 +23,18 @@ public class FileTree extends JTree {
     private final String projectDir;
     private final DefaultMutableTreeNode root;
     private final JFrame frame = WindowProvider.getFrame();
+    private final FilesRepository filesRepository;
 
-    public FileTree(JTabbedPane tabbedPane, String projectDir, FileManager fileManager) {
+    public FileTree(FileTab tabbedPane, String projectDir, FileManager fileManager, FilesRepository filesRepository) {
         super(new DefaultMutableTreeNode(Arrays.stream(projectDir.split("/")).toList().getLast()));
         this.projectDir = projectDir;
+        this.filesRepository = filesRepository;
+
         this.root = (DefaultMutableTreeNode) this.getModel().getRoot();
 
         createFileNodes(new File(projectDir), root);
+
+        tabbedPane.openLastOpenedFiles(tabbedPane);
 
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
@@ -60,6 +59,17 @@ public class FileTree extends JTree {
                 return c;
             }
         });
+
+        tabbedPane.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_S) {
+                    tabbedPane.saveCurrentFile(tabbedPane);
+                }
+            }
+        });
+
+        tabbedPane.addChangeListener(e -> saveLastViewedFile(tabbedPane));
 
         FileContextMenu popupMenu = new FileContextMenu(fileManager, projectDir, this::reloadTree);
 
@@ -92,7 +102,7 @@ public class FileTree extends JTree {
         reloadTree();
     }
 
-    private String getSelectedNodePath() {
+    public String getSelectedNodePath() {
         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
         if (selectedNode == null || selectedNode == root) return null;
 
@@ -108,7 +118,7 @@ public class FileTree extends JTree {
         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
         if (selectedNode == null || selectedNode == root) return;
 
-        int confirm = JOptionPane.showConfirmDialog(this,
+        int confirm = JOptionPane.showConfirmDialog(frame,
             "Are you sure you want to delete " + selectedNode + "?",
             "Confirm Delete", JOptionPane.YES_NO_OPTION);
 
@@ -123,7 +133,7 @@ public class FileTree extends JTree {
                 ((DefaultTreeModel) getModel()).removeNodeFromParent(selectedNode);
                 reloadTree();
             } else {
-                JOptionPane.showMessageDialog(this, "Could not delete " + fileToDelete.getName(),
+                JOptionPane.showMessageDialog(frame, "Could not delete " + fileToDelete.getName(),
                     "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -138,7 +148,7 @@ public class FileTree extends JTree {
         return file.delete();
     }
 
-    private void openSelectedFile(JTabbedPane tabbedPane) {
+    private void openSelectedFile(FileTab tabbedPane) {
         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
         if (selectedNode == null || !selectedNode.isLeaf()) return;
 
@@ -149,35 +159,17 @@ public class FileTree extends JTree {
 
         File selectedFile = new File(filePath.toString());
         if (selectedFile.isFile()) {
-            openFileInNewTab(selectedFile, tabbedPane);
+            tabbedPane.openFileInNewTab(selectedFile, tabbedPane);
         }
     }
 
-    private void openFileInNewTab(File file, JTabbedPane tabbedPane) {
-        try {
-            String content = new String(Files.readAllBytes(file.toPath()));
-
-            RSyntaxTextArea textArea = new RSyntaxTextArea(20, 60);
-            textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
-            textArea.setCodeFoldingEnabled(true);
-            textArea.setAntiAliasingEnabled(true);
-            textArea.setText(content);
-
-            var lsp = LanguageSupportFactory.get();
-
-            lsp.register(textArea);
-
-            try (InputStream in = FileTree.class.getClassLoader().getResourceAsStream("dark.xml")) {
-                Theme theme = Theme.load(in);
-                theme.apply(textArea);
+    private void saveLastViewedFile(FileTab tabbedPane) {
+        int selectedIndex = tabbedPane.getSelectedIndex();
+        if (selectedIndex >= 0) {
+            String selectedFilePath = tabbedPane.tabFilePathMap.get(selectedIndex);
+            if (selectedFilePath != null) {
+                filesRepository.saveLastViewedFile(selectedFilePath);
             }
-
-            RTextScrollPane scrollPane = new RTextScrollPane(textArea);
-            tabbedPane.addTab(file.getName(), scrollPane);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(frame, "Could not open file: " + file.getName(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
