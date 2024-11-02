@@ -1,4 +1,4 @@
-package com.amberj.component;
+package com.amberj.component.icon;
 
 import com.formdev.flatlaf.icons.FlatAbstractIcon;
 import java.awt.BasicStroke;
