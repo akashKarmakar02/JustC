@@ -26,8 +26,8 @@ public class Main {
 
     static {
         fileManager = new FileManager();
-        compiler = new Compiler();
         emitter = new EventEmitter();
+        compiler = new Compiler();
     }
 
     public static void createAndShowEditor() {
@@ -53,6 +53,7 @@ public class Main {
         frame.setLayout(new BorderLayout());
 
         String projectDir = dataLib.getProperty(ProjectDataLib.ProjectDataKey.PROJECT_DIRECTORY);
+        WindowProvider.setProjectDir(projectDir);
 
         if (projectDir == null) {
             JFileChooser folderChooser = new JFileChooser();
@@ -62,6 +63,7 @@ public class Main {
             if (result == JFileChooser.APPROVE_OPTION) {
                 projectDir = folderChooser.getSelectedFile().getAbsolutePath();
                 dataLib.setProperty(ProjectDataLib.ProjectDataKey.PROJECT_DIRECTORY, projectDir);
+                WindowProvider.setProjectDir(projectDir);
             } else {
                 JOptionPane.showMessageDialog(frame, "A project directory is required to continue.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
