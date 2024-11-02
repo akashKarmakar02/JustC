@@ -13,6 +13,7 @@ public class WindowProvider {
     private static JFrame frame;
     private static JustTerminal console;
     private static JPanel terminalPanel;
+    private static String projectDir;
 
     public static JFrame getFrame() {
         if (frame == null) {
@@ -64,5 +65,13 @@ public class WindowProvider {
         terminalPanel.setVisible(true);
         frame.revalidate();
         frame.repaint();
+    }
+
+    public static String getProjectDir() {
+        return projectDir;
+    }
+
+    public static void setProjectDir(String projectDir) {
+        WindowProvider.projectDir = projectDir;
     }
 }

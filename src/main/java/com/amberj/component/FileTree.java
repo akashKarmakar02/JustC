@@ -2,11 +2,14 @@ package com.amberj.component;
 
 import com.amberj.common.FileData;
 import com.amberj.common.FileType;
+import com.amberj.component.icon.FlatCFileIcon;
 import com.amberj.data.FilesRepository;
 import com.amberj.feature.FileManager;
 import com.amberj.lib.WindowProvider;
+import com.formdev.flatlaf.icons.FlatFileViewFileIcon;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -33,6 +36,7 @@ public class FileTree extends JTree {
         this.root = (DefaultMutableTreeNode) this.getModel().getRoot();
 
         createFileNodes(new File(projectDir), root);
+        setBorder(new EmptyBorder(5, 5, 0, 0));
 
         tabbedPane.openLastOpenedFiles(tabbedPane);
 
@@ -50,9 +54,15 @@ public class FileTree extends JTree {
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 
                 Object userObject = node.getUserObject();
-                if (userObject instanceof FileData fileData) {
+                if (node == root) {
+                    setIcon(folderIcon);
+                } else if (userObject instanceof FileData fileData) {
                     if (fileData.type() == FileType.Folder) {
                         setIcon(folderIcon);
+                    } else if (fileData.type() == FileType.File && fileData.name().endsWith(".c")){
+                        setIcon(new FlatCFileIcon());
+                    } else {
+                        setIcon(new FlatFileViewFileIcon());
                     }
                 }
 

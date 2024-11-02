@@ -29,7 +29,6 @@ public class FileContextMenu extends JPopupMenu {
         newFolder.setIcon(new FlatFileChooserNewFolderIcon());
         newFolder.addActionListener(e -> {
             new CreateDialog("Enter Folder Name", "Enter file name...", (value) -> {
-                System.out.println(getFileCreationPath());
                 fileManager.createFolder(value, getFileCreationPath());
                 runnable.run();
             });
@@ -45,7 +44,6 @@ public class FileContextMenu extends JPopupMenu {
     }
 
     private String getFileCreationPath() {
-        System.out.println();
         if (path == null)
             return projectDir;
         return path;

@@ -2,6 +2,7 @@ package com.amberj.component;
 
 import com.amberj.data.FilesRepository;
 import com.amberj.feature.FileManager;
+import com.amberj.feature.JustCLanguageSupport;
 import com.amberj.lib.WindowProvider;
 import org.fife.rsta.ac.LanguageSupportFactory;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -88,6 +89,8 @@ public class FileTab extends JTabbedPane {
             });
 
             var lsp = LanguageSupportFactory.get();
+            lsp.addLanguageSupport("text/c", "com.amberj.feature.JustCLanguageSupport");
+
             lsp.register(textArea);
 
             try (InputStream in = FileTree.class.getClassLoader().getResourceAsStream("dark.xml")) {

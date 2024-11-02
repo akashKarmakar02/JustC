@@ -1,5 +1,7 @@
 package com.amberj.terminal;
 
+import com.amberj.lib.ProjectDataLib;
+import com.amberj.lib.WindowProvider;
 import com.jediterm.app.JediTerm;
 import com.jediterm.terminal.TtyConnector;
 import com.pty4j.PtyProcess;
@@ -13,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class JustTerminal extends TerminalPanel {
-
 
     @Override
     public TtyConnector createTtyConnector() {
@@ -31,8 +32,9 @@ public class JustTerminal extends TerminalPanel {
                     command = new String[] { shell };
                 }
             }
+            String projectDir = new ProjectDataLib().getProperty(ProjectDataLib.ProjectDataKey.PROJECT_DIRECTORY);
 
-            String workingDirectory = Path.of(".").toAbsolutePath().normalize().toString();
+            String workingDirectory = Path.of(projectDir).toAbsolutePath().normalize().toString();
 
             PtyProcess process = new PtyProcessBuilder()
                     .setDirectory(workingDirectory)

@@ -26,7 +26,6 @@ public class EventEmitter {
      * @param listener the listener to register
      */
     public void on(String event, Consumer<Object> listener) {
-        System.out.println(event);
         listeners.computeIfAbsent(event, k -> new ArrayList<>()).add(listener);
     }
 

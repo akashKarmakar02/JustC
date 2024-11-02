@@ -1,5 +1,6 @@
 package com.amberj.component;
 
+import com.amberj.component.icon.FlatRunIcon;
 import com.amberj.feature.Compiler;
 import com.amberj.feature.FileManager;
 import com.amberj.lib.WindowProvider;
@@ -26,7 +27,6 @@ public class MenuBar extends JMenuBar {
         fileMenu.add(new JMenuItem("Open") {{
             addActionListener(e -> {
                 var path = fileManager.openFolder();
-                System.out.println("Here");
                 emitter.emit(EventEmitter.EventType.PROJECT_CHANGED, path);
             });
         }});
@@ -64,7 +64,6 @@ public class MenuBar extends JMenuBar {
             var path = fileTab.getSelectedTabNodePath();
             if (path != null) {
                 compiler.compileAndRunCCode(path);
-                System.out.println(path);
             }
         });
         FlatButton minimizeButton = createWindowControlButton(new FlatWindowIconifyIcon(), e -> frame.setState(Frame.ICONIFIED));
