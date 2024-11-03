@@ -109,9 +109,6 @@
                 <configuration>
                     <mainClass>com.amberj.Main</mainClass>
                     <imageName>JustC</imageName>
-                    <buildArgs>
-                        <arg>--no-fallback</arg>
-                    </buildArgs>
                 </configuration>
             </plugin>
         </plugins>

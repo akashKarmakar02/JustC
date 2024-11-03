@@ -110,7 +110,12 @@ public class Main {
         });
 
         JPanel leftMenu = new JPanel();
-        leftMenu.setPreferredSize(new Dimension(50, 0));
+        int leftMenuWidth = 50;
+
+        leftMenu.setPreferredSize(new Dimension(leftMenuWidth, 0));
+        leftMenu.setMinimumSize(new Dimension(leftMenuWidth, 0));
+        leftMenu.setMaximumSize(new Dimension(leftMenuWidth, Integer.MAX_VALUE));
+
         leftMenu.add(new FlatButton(){{
             setIcon(new FlatFolderIcon());
             addActionListener(e -> {
@@ -128,9 +133,13 @@ public class Main {
         leftPanel.add(leftMenu);
         leftPanel.add(treeScrollPane);
 
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, tabbedPane);
+        splitPane.setDividerLocation(270);
+        splitPane.setResizeWeight(0);
+        splitPane.setOneTouchExpandable(false);
+
         frame.setJMenuBar(menuBar);
-        frame.add(leftPanel, BorderLayout.WEST);
-        frame.add(tabbedPane, BorderLayout.CENTER);
+        frame.add(splitPane, BorderLayout.CENTER);
 
 
         frame.setVisible(true);
