@@ -3,12 +3,16 @@ package com.amberj;
 import com.amberj.component.FileTab;
 import com.amberj.component.FileTree;
 import com.amberj.component.MenuBar;
+import com.amberj.component.icon.FlatFolderIcon;
 import com.amberj.data.FilesRepository;
 import com.amberj.feature.Compiler;
 import com.amberj.feature.FileManager;
 import com.amberj.lib.ProjectDataLib;
 import com.amberj.lib.WindowProvider;
 import com.amberj.util.EventEmitter;
+import com.formdev.flatlaf.extras.components.FlatButton;
+import com.formdev.flatlaf.icons.FlatFileChooserHomeFolderIcon;
+import com.formdev.flatlaf.icons.FlatFileChooserUpFolderIcon;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
@@ -77,10 +81,12 @@ public class Main {
         FileTab tabbedPane = new FileTab(filesRepository, fileManager);
         JMenuBar menuBar = new MenuBar(fileManager, tabbedPane, compiler, emitter);
         AtomicReference<JTree> fileTree = new AtomicReference<>(new FileTree(tabbedPane, projectDir, fileManager, filesRepository));
+        AtomicReference<Boolean> isTreeScrollPaneVisible = new AtomicReference<>(true);
 
         JScrollPane treeScrollPane = new JScrollPane(fileTree.get());
-        treeScrollPane.setPreferredSize(new Dimension(200, 0));
+        treeScrollPane.setPreferredSize(new Dimension(270, 0));
         treeScrollPane.setBorder(BorderFactory.createEmptyBorder());
+        treeScrollPane.setVisible(isTreeScrollPaneVisible.get());
 
         emitter.on(EventEmitter.EventType.PROJECT_CHANGED.value, (path) -> {
             Thread.ofVirtual().start(() -> {
@@ -103,9 +109,29 @@ public class Main {
             });
         });
 
+        JPanel leftMenu = new JPanel();
+        leftMenu.setPreferredSize(new Dimension(50, 0));
+        leftMenu.add(new FlatButton(){{
+            setIcon(new FlatFolderIcon());
+            addActionListener(e -> {
+                var value = isTreeScrollPaneVisible.get();
+                treeScrollPane.setVisible(!value);
+                isTreeScrollPaneVisible.set(!value);
+                frame.revalidate();
+                frame.repaint();
+            });
+        }});
+
+        JPanel leftPanel = new JPanel();
+        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.X_AXIS));
+
+        leftPanel.add(leftMenu);
+        leftPanel.add(treeScrollPane);
+
         frame.setJMenuBar(menuBar);
-        frame.add(treeScrollPane, BorderLayout.WEST);
+        frame.add(leftPanel, BorderLayout.WEST);
         frame.add(tabbedPane, BorderLayout.CENTER);
+
 
         frame.setVisible(true);
     }

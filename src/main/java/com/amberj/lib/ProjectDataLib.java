@@ -13,7 +13,8 @@ public class ProjectDataLib {
     public enum ProjectDataKey {
         PROJECT_DIRECTORY("project.directory"),
         OPENED_FILES("opened.files"),
-        VIEW_TAB_FILES("view.tab.files");
+        VIEW_TAB_FILES("view.tab.files"),
+        GCC_PATH("gcc.path");
 
         private final String key;
 

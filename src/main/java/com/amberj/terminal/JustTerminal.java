@@ -34,7 +34,7 @@ public class JustTerminal extends TerminalPanel {
             }
             String projectDir = new ProjectDataLib().getProperty(ProjectDataLib.ProjectDataKey.PROJECT_DIRECTORY);
 
-            String workingDirectory = Path.of(projectDir).toAbsolutePath().normalize().toString();
+            String workingDirectory = Path.of(projectDir != null ? projectDir : ".").toAbsolutePath().normalize().toString();
 
             PtyProcess process = new PtyProcessBuilder()
                     .setDirectory(workingDirectory)

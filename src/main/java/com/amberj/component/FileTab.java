@@ -2,7 +2,6 @@ package com.amberj.component;
 
 import com.amberj.data.FilesRepository;
 import com.amberj.feature.FileManager;
-import com.amberj.feature.JustCLanguageSupport;
 import com.amberj.lib.WindowProvider;
 import org.fife.rsta.ac.LanguageSupportFactory;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -72,21 +71,7 @@ public class FileTab extends JTabbedPane {
         try {
             String content = new String(Files.readAllBytes(file.toPath()));
 
-            RSyntaxTextArea textArea = new RSyntaxTextArea(20, 60);
-            textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
-            textArea.setCodeFoldingEnabled(true);
-            textArea.setAntiAliasingEnabled(true);
-            textArea.setText(content);
-            textArea.setFont(new Font("SansSerif", Font.PLAIN, 25));
-
-            textArea.addKeyListener(new KeyAdapter() {
-                @Override
-                public void keyPressed(KeyEvent e) {
-                    if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_S) {
-                        saveCurrentFile(tabbedPane);
-                    }
-                }
-            });
+            RSyntaxTextArea textArea = new EditArea(content, () -> saveCurrentFile(tabbedPane));
 
             var lsp = LanguageSupportFactory.get();
             lsp.addLanguageSupport("text/c", "com.amberj.feature.JustCLanguageSupport");
