@@ -86,7 +86,6 @@ public class Main {
         JScrollPane treeScrollPane = new JScrollPane(fileTree.get());
         treeScrollPane.setPreferredSize(new Dimension(270, 0));
         treeScrollPane.setBorder(BorderFactory.createEmptyBorder());
-        treeScrollPane.setVisible(isTreeScrollPaneVisible.get());
 
         emitter.on(EventEmitter.EventType.PROJECT_CHANGED.value, (path) -> {
             Thread.ofVirtual().start(() -> {
@@ -115,15 +114,18 @@ public class Main {
         leftMenu.setPreferredSize(new Dimension(leftMenuWidth, 0));
         leftMenu.setMinimumSize(new Dimension(leftMenuWidth, 0));
         leftMenu.setMaximumSize(new Dimension(leftMenuWidth, Integer.MAX_VALUE));
+        JSplitPane splitPane = new JSplitPane();
 
         leftMenu.add(new FlatButton(){{
             setIcon(new FlatFolderIcon());
             addActionListener(e -> {
                 var value = isTreeScrollPaneVisible.get();
-                treeScrollPane.setVisible(!value);
                 isTreeScrollPaneVisible.set(!value);
-                frame.revalidate();
-                frame.repaint();
+                if (isTreeScrollPaneVisible.get()) {
+                    splitPane.setDividerLocation(270);
+                } else {
+                    splitPane.setDividerLocation(leftMenu.getPreferredSize().width);
+                }
             });
         }});
 
@@ -133,10 +135,14 @@ public class Main {
         leftPanel.add(leftMenu);
         leftPanel.add(treeScrollPane);
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, tabbedPane);
+        splitPane.setPreferredSize(new Dimension(50, 0));
+        splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setLeftComponent(leftPanel);
+        splitPane.setRightComponent(tabbedPane);
         splitPane.setDividerLocation(270);
         splitPane.setResizeWeight(0);
         splitPane.setOneTouchExpandable(false);
+        splitPane.revalidate();
 
         frame.setJMenuBar(menuBar);
         frame.add(splitPane, BorderLayout.CENTER);
