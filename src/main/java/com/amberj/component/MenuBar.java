@@ -9,6 +9,7 @@ import com.formdev.flatlaf.extras.components.FlatButton;
 import com.formdev.flatlaf.icons.*;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -21,7 +22,13 @@ public class MenuBar extends JMenuBar {
     public MenuBar(FileManager fileManager, FileTab fileTab, Compiler compiler, EventEmitter emitter) {
         super();
 
-        // Create File Menu
+        JLabel title = new JLabel("JustC IDE");
+
+        title.setFont(new Font("SansSerif", Font.BOLD, 20));
+        title.setBorder(new EmptyBorder(0, 20, 0, 20));
+
+        add(title);
+
         JMenu fileMenu = new JMenu("File");
         fileMenu.add(new JMenuItem("New"));
         fileMenu.add(new JMenuItem("Open") {{
