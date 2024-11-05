@@ -12,9 +12,22 @@ public class Compiler {
     public void compileAndRunCCode(String path) {
         try {
             WindowProvider.showBottomPanel();
-            terminal.getTerminal().getTtyConnector().write("gcc " + path + " -o " + path.replace(".c", "") + " && " + path.replace(".c", "") + "\n");
+            String executablePath = path.replace(".c", "");
+
+            String command;
+            if (isWindows()) {
+                command = "gcc " + path + " -o " + executablePath + " && " + executablePath;
+            } else {
+                command = "gcc " + path + " -o " + executablePath + " && ./" + executablePath;
+            }
+
+            terminal.getTerminal().getTtyConnector().write(command + "\n");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private boolean isWindows() {
+        return System.getProperty("os.name").toLowerCase().contains("win");
     }
 }
