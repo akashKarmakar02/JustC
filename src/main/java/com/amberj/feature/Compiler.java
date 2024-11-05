@@ -18,7 +18,7 @@ public class Compiler {
             if (isWindows()) {
                 command = "gcc " + path + " -o " + executablePath + " && " + executablePath;
             } else {
-                command = "gcc " + path + " -o " + executablePath + " && ./" + executablePath;
+                command = "gcc " + path + " -o " + executablePath + " && " + executablePath;
             }
 
             terminal.getTerminal().getTtyConnector().write(command + "\n");
